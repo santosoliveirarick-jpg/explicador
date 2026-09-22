@@ -1,11 +1,51 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Exemplo Flask</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explicador de Conceitos</title>
 </head>
 <body>
-    <h1>Olá, {{ nome }}!</h1>
-    <p>Bem-vindo à sua primeira página usando <strong>{{ tec }}</strong>.</p>
+  <h1>Explicador de Conceitos</h1>
+  <p>Escolha um tema e descubra como a IA o explica para públicos diferentes.</p>
+
+  <!-- method="post" envia os dados para a rota / do Flask. -->
+  <form method="post">
+    <label for="tema">O que você quer aprender?</label><br>
+    <input
+      id="tema"
+      name="tema"
+      type="text"
+      value="{{ tema }}"
+      placeholder="Ex.: fotossíntese"
+      required
+    >
+
+    <br><br>
+
+    <label for="nivel">Nível da explicação:</label><br>
+    <select id="nivel" name="nivel">
+      <option value="criança" {% if nivel == "criança" %}selected{% endif %}>Criança</option>
+      <option value="adolescente" {% if nivel == "adolescente" %}selected{% endif %}>Adolescente</option>
+      <option value="adulto" {% if nivel == "adulto" %}selected{% endif %}>Adulto</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Explicar</button>
+  </form>
+
+  {% if erro %}
+    <p><strong>Erro:</strong> {{ erro }}</p>
+  {% endif %}
+
+  {% if explicacao %}
+    <hr>
+    <h2>{{ tema }}</h2>
+    <!-- white-space preserva as quebras de linha sem inserir HTML da IA. -->
+    <p style="white-space: pre-wrap">{{ explicacao }}</p>
+    <p><small>Resposta gerada por IA. Confirme informações importantes em fontes confiáveis.</small></p>
+  {% endif %}
 </body>
 </html>
+
