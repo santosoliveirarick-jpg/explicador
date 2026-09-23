@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Explicador de Conceitos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <h1>Explicador de Conceitos</h1>
@@ -36,16 +37,16 @@
   </form>
 
   {% if erro %}
-    <p><strong>Erro:</strong> {{ erro }}</p>
+    <p class="erro"><strong>Erro:</strong> {{ erro }}</p>
   {% endif %}
 
   {% if explicacao %}
-    <hr>
-    <h2>{{ tema }}</h2>
-    <!-- white-space preserva as quebras de linha sem inserir HTML da IA. -->
-    <p style="white-space: pre-wrap">{{ explicacao }}</p>
-    <p><small>Resposta gerada por IA. Confirme informações importantes em fontes confiáveis.</small></p>
+    <section class="resposta">
+      <h2>{{ tema }}</h2>
+      <!-- white-space preserva as quebras de linha sem inserir HTML da IA. -->
+      <p class="texto-resposta">{{ explicacao }}</p>
+      <p class="aviso"><small>Resposta gerada por IA. Confirme informações importantes em fontes confiáveis.</small></p>
+    </section>
   {% endif %}
 </body>
 </html>
-

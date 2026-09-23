@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 # A chave fica nos Secrets do Codespaces, nunca escrita no código.
 # GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Mas para efeito didático vou colocar aqui abaixo (NUNCA FAÇA ISSO!!!)
 GROQ_API_KEY = "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"
 
 def pedir_explicacao(tema, nivel):
@@ -39,6 +41,9 @@ Ao final, dê exatamente um exemplo prático.
     # Este é o caminho definido pelo formato de resposta da API.
     return dados["choices"][0]["message"]["content"]
 
+@app.route('/oi')
+def oi():
+    return '<h1>Oi, pessoal!</h1>'
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -72,7 +77,3 @@ def index():
         nivel=nivel,
     )
 
-
-if __name__ == "__main__":
-    # host=0.0.0.0 permite que o Codespaces encaminhe a porta 5000.
-    app.run(host="0.0.0.0", port=5000, debug=True)
