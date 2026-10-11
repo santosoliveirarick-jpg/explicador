@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Histórico de consultas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Histórico de consultas</h1>
+  <p><a href="{{ url_for('index') }}">Voltar ao explicador</a></p>
+
+  {% if erro %}
+    <p class="erro"><strong>Erro:</strong> {{ erro }}</p>
+  {% elif consultas %}
+    {% for consulta in consultas %}
+      <section class="resposta consulta">
+        <h2>{{ consulta.tema }}</h2>
+        <p><strong>Nível:</strong> {{ consulta.nivel }}</p>
+        <p class="texto-resposta">{{ consulta.explicacao }}</p>
+        <p class="data"><small>{{ consulta.created_at }}</small></p>
+      </section>
+    {% endfor %}
+  {% else %}
+    <p>Nenhuma consulta cadastrada ainda.</p>
+  {% endif %}
+</body>
+</html>

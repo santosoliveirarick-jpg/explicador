@@ -7,10 +7,52 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 # A chave fica nos Secrets do Codespaces, nunca escrita no código.
-# GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-# Mas para efeito didático vou colocar aqui abaixo (NUNCA FAÇA ISSO!!!)
-GROQ_API_KEY = "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"
+def cabecalhos_supabase():
+    """Monta os cabeçalhos usados pela API REST do Supabase."""
+    return {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+    }
+
+
+def salvar_consulta(tema, nivel, explicacao):
+    """Grava uma consulta na tabela consultas do Supabase."""
+    # TEMPORÁRIO: imprimir no console do terminal para depuração.
+    print("Entrou em salvar_consulta.", flush=True)
+    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/consultas"
+    resposta = requests.post(
+        url,
+        headers=cabecalhos_supabase(),
+        json={"tema": tema, "nivel": nivel, "explicacao": explicacao},
+        timeout=10,
+    )
+    # Mudar abaixo para imprimir no console do terminal:
+    print(f"Resposta do Supabase: {resposta.status_code} - {resposta.text} - \nSUPABASE_URL: {SUPABASE_URL} - \nURL: {url}", flush=True)
+    resposta.raise_for_status()
+
+
+def buscar_historico():
+    """Devolve as consultas mais recentes cadastradas no Supabase."""
+    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/consultas"
+    resposta = requests.get(
+        url,
+        headers=cabecalhos_supabase(),
+        params={
+            "select": "id,tema,nivel,explicacao,created_at",
+            "order": "created_at.desc",
+        },
+        timeout=10,
+    )
+    # TEMPORÁRIO: imprimir no console do terminal para depuração.
+    print(f"Resposta do Supabase: {resposta.status_code} - {resposta.text} - \n{SUPABASE_URL} - \n{url}", flush=True)
+    resposta.raise_for_status()
+    return resposta.json()
+
 
 def pedir_explicacao(tema, nivel):
     """Envia o tema e o nível para a API e devolve o texto da IA."""
@@ -63,11 +105,19 @@ def index():
             erro = "Escolha um nível válido."
         elif not GROQ_API_KEY:
             erro = "A chave GROQ_API_KEY não foi configurada no Codespaces."
+        elif not SUPABASE_URL or not SUPABASE_KEY:
+            erro = "Configure as variáveis SUPABASE_URL e SUPABASE_KEY."
         else:
             try:
                 explicacao = pedir_explicacao(tema, nivel)
             except requests.RequestException:
-                erro = "Não foi possível conversar com a IA agora. Tente novamente."
+                erro = "Não foi possível conversar com a IA agora. Tente novamente." + SUPABASE_URL
+            else:
+                print("Resposta da IA recebida; iniciando gravação.", flush=True)
+                try:
+                    salvar_consulta(tema, nivel, explicacao)
+                except requests.RequestException:
+                    erro = "A explicação foi gerada, mas não foi possível salvar no histórico." 
 
     return render_template(
         "index.html",
@@ -76,4 +126,20 @@ def index():
         tema=tema,
         nivel=nivel,
     )
+
+
+@app.route("/historico")
+def historico():
+    consultas = []
+    erro = None
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        erro = "Configure as variáveis SUPABASE_URL e SUPABASE_KEY."
+    else:
+        try:
+            consultas = buscar_historico()
+        except requests.RequestException:
+            erro = "Não foi possível carregar o histórico agora. Tente novamente."
+
+    return render_template("historico.html", consultas=consultas, erro=erro)
 

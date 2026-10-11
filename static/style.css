@@ -47,6 +47,11 @@ h1 + p {
   font-size: 1.05rem;
 }
 
+a {
+  color: var(--verde-principal);
+  font-weight: 700;
+}
+
 form,
 .resposta {
   background-color: var(--branco);
@@ -122,6 +127,19 @@ button:focus-visible {
 .resposta {
   margin-top: 34px;
   padding: 26px;
+}
+
+.consulta {
+  margin-top: 18px;
+}
+
+.consulta h2 {
+  margin-top: 0;
+}
+
+.data {
+  margin-bottom: 0;
+  color: var(--texto-suave);
 }
 
 .resposta h2 {
