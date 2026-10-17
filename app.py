@@ -77,3 +77,7 @@ def index():
         nivel=nivel,
     )
 
+    # Adicionar um bloco app.run(...) para o script deixar um servidor escutando na porta 5000.
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)
+
