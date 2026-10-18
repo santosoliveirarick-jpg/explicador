@@ -138,8 +138,14 @@ def historico():
     else:
         try:
             consultas = buscar_historico()
+        except Exception as e:
+            print("Error:", e)
         except requests.RequestException:
             erro = "Não foi possível carregar o histórico agora. Tente novamente."
 
     return render_template("historico.html", consultas=consultas, erro=erro)
 
+
+# Adicionar um bloco app.run(...) para o script deixar um servidor escutando na porta 5000.
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
