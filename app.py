@@ -11,6 +11,20 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+if not SUPABASE_URL:
+    print(
+        "Aviso: SUPABASE_URL não foi configurada. "
+        "O histórico de consultas não funcionará.",
+        flush=True,
+    )
+
+if not SUPABASE_KEY:
+    print(
+        "Aviso: SUPABASE_KEY não foi configurada. "
+        "O histórico de consultas não funcionará.",
+        flush=True,
+    )
+
 def cabecalhos_supabase():
     """Monta os cabeçalhos usados pela API REST do Supabase."""
     return {
